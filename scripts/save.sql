@@ -22,16 +22,16 @@ begin
 	perform dox.create_collection(collection => collection, schema => schema);
 	
 
-	if not (doc -> 'id') is null then
+	if (select doc ? 'id') then
 
 		execute format('insert into %s.%s (id, body) 
 										values (%L, %L) 
 										on conflict (id)
 										do update set body = excluded.body, updated_at = now()
-										returning body',schema,collection, doc -> 'id', doc);
-		res := new_doc;
+										returning *',schema,collection, doc -> 'id', doc) into saved;
 	
 	else
+		-- there's no document id
 		execute format('insert into %s.%s (body) values (%L) returning *',schema,collection, doc) into saved;
 
 		-- this will have an id on it
@@ -39,9 +39,9 @@ begin
 		select(doc || format('{"id": %s}', saved.id::text)::jsonb) into res;
 		execute format('update %s.%s set body=%L, updated_at = now() where id=%s',schema,collection,res,saved.id);
 		
-		--res:= saved_doc;
-	end if;
 
+	end if;
+	res := saved.body;
 	-- do it automatically MMMMMKKK?
 	foreach search_key in array search
 	loop
