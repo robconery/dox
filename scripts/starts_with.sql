@@ -17,14 +17,14 @@ declare
 begin
 	
 	-- is there a column with this name?
-	execute format('SELECT count(1) 
-											FROM information_schema.columns 
-											WHERE table_name=%L and table_schema=%L and column_name=%L',
-										collection,schema,key) into column_exists;
 	
-	if column_exists > 0 then
-		return query execute search_query;
-	elseif migrate then
+	if migrate then
+
+		execute format('SELECT count(1) 
+												FROM information_schema.columns 
+												WHERE table_name=%L and table_schema=%L and column_name=%L',
+											collection,schema,key) into column_exists;
+
 		-- add the column
 		execute format('alter table %s.%s add column %s text', schema, collection,key);
 		-- fill it
@@ -32,9 +32,9 @@ begin
 
 		-- index it
 		execute format('create index on %s.%s(%s)', schema,collection,key);
-		return query execute search_query;
+		
 	end if;
 
-
+	return query execute search_query;
 end;
 $$ language plpgsql;
