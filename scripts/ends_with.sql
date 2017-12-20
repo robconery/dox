@@ -1,6 +1,6 @@
 set search_path=dox;
-drop function if exists starts_with(varchar, varchar, varchar, varchar, bool);
-create function starts_with(
+drop function if exists ends_with(varchar, varchar, varchar, varchar, bool);
+create function ends_with(
 	collection varchar, 
 	key varchar, 
 	term varchar, 
@@ -10,7 +10,7 @@ create function starts_with(
 returns setof jsonb
 as $$
 declare
-	search_param text := term || '%';
+	search_param text := '%' || term;
 begin
 	
 	-- is there a column with this name?
