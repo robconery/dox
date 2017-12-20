@@ -1,9 +1,9 @@
 set search_path=dox;
 drop function if exists save(varchar, jsonb,text[],varchar);
 create function save(
-	name varchar, 
+	collection varchar, 
 	doc jsonb, 
-	search text[] = null,
+	search text[] = array['name','email','first','first_name','last','last_name','description','title','city','state','address','street', 'company'],
 	schema varchar default 'public', 
 	out res jsonb
 )
@@ -17,13 +17,9 @@ declare
 	search_params varchar;
 begin
 	
-	if array_length(search,1) <= 0  or search is null then
-		--get the first
-		select search_args into search from dox._opts order by id limit 1;
-	end if;
 
 	-- make sure the table exists
-	perform dox.create_table(name => name, schema => schema);
+	perform dox.create_collection(collection => collection, schema => schema);
 	
 
 	if not (doc -> 'id') is null then
@@ -32,16 +28,16 @@ begin
 										values (%L, %L) 
 										on conflict (id)
 										do update set body = excluded.body, updated_at = now()
-										returning body',schema,name, doc -> 'id', doc);
+										returning body',schema,collection, doc -> 'id', doc);
 		res := new_doc;
 	
 	else
-		execute format('insert into %s.%s (body) values (%L) returning *',schema,name, doc) into saved;
+		execute format('insert into %s.%s (body) values (%L) returning *',schema,collection, doc) into saved;
 
 		-- this will have an id on it
 		
 		select(doc || format('{"id": %s}', saved.id::text)::jsonb) into res;
-		execute format('update %s.%s set body=%L, updated_at = now() where id=%s',schema,name,res,saved.id);
+		execute format('update %s.%s set body=%L, updated_at = now() where id=%s',schema,collection,res,saved.id);
 		
 		--res:= saved_doc;
 	end if;
@@ -54,7 +50,7 @@ begin
 		end if;
 	end loop;
 	if search_params is not null then
-		execute format('update %s.%s set search=to_tsvector(%L) where id=%s',schema,name,search_params,saved.id);
+		execute format('update %s.%s set search=to_tsvector(%L) where id=%s',schema,collection,search_params,saved.id);
 	end if;
 
 end;
