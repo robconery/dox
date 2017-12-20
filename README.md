@@ -8,7 +8,7 @@ This is very much a work in progress.
 
 Let's say you have a JSON document called `customer`:
 
-```json
+```js
 {
   name: "Jill",
   email: "jill@test.com",
@@ -33,17 +33,17 @@ This will do a few things:
 Now, you can query your document thus:
 
 ```sql
-select * from dox.search('customers','jill'); -- full text search on a single term
-select * from dox.find_one('customers','{"name": "Jill"}'); -- simple query
-select * from dox.find('customers','{"company": "Red:4"}'); -- find all Red:4 people
+select * from dox.search(table => 'customers', term => 'jill'); -- full text search on a single term
+select * from dox.find_one(table => 'customers', key => '{"name": "Jill"}'); -- simple query
+select * from dox.find(table => 'customers', key => '{"company": "Red:4"}'); -- find all Red:4 people
 ```
 
 These queries will be performant as they will be able to flex indexing, but there's a lot more you can do if you like using plain old SQL clauses:
 
 ```sql
-select * from dox.fuzzy('customers','{"email": "test.com"}');
-select * from dox.starts_with('customers','{"email": "test"}');
-select * from dox.ends_with('customers','{"email": ".com"}');
+select * from dox.fuzzy(table => 'customers', key => '{"email": "test.com"}');
+select * from dox.starts_with(table => 'customers', key => '{"email": "test"}');
+select * from dox.ends_with(table => 'customers', key => '{"email": ".com"}');
 ```
 
 These queries will, unfortunately, use a sequential scan (they have to). But there are ways around this! One of my plans is to include the ability to use traditional columns and values to locate data from a document. I'm still musing on this, but I have a few ideas.
