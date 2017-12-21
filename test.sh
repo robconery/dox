@@ -8,3 +8,4 @@ echo "Here we go!"
 psql $TESTDB < tests/save.sql
 psql $TESTDB < tests/finding.sql
 psql $TESTDB < tests/starts_with.sql
+psql $TESTDB < tests/modify.sql
