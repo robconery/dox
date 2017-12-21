@@ -19,6 +19,9 @@ begin
 
 			-- index it
 			execute format('create index on %s.%s(%s)', schema, collection, 'lookup_' || key);
+
+      -- TODO: drop a trigger on this!
+
 		end if;
 		res := true;
 end;
