@@ -6,8 +6,8 @@ TEST=${CURDIR}/test.sql
 
 all: init functions
 
-exec: build
-	psql dvdrental < $(BUILD)
+install: all
+	@psql dvdrental < $(BUILD) --quiet
 
 init:
 	@cat $(INIT) >> $(BUILD)
@@ -15,8 +15,8 @@ init:
 functions:
 	@cat $(FUNCTIONS) >> $(BUILD)
 
-test: 
-	$(shell . ./test.sh)
+test: clean install
+	. ./test.sh
 
 clean:
 	@rm -rf $(BUILD)

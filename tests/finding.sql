@@ -1,15 +1,12 @@
-
 DO $$
 declare
   res jsonb;
 begin
 
 --drop customers
+raise notice 'dropping customers';
 drop table if exists customers;
 set client_min_messages=NOTICE;
-
-raise notice '********************** SAVING ***********************';
-
 raise notice 'Save works for basic operation and creates a table';
 select * into res from dox.save(
   collection => 'customers', 

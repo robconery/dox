@@ -29,19 +29,19 @@ begin
 										on conflict (id)
 										do update set body = excluded.body, updated_at = now()
 										returning *',schema,collection, doc -> 'id', doc) into saved;
-	
+    res := saved.body;
 	else
 		-- there's no document id
 		execute format('insert into %s.%s (body) values (%L) returning *',schema,collection, doc) into saved;
 
 		-- this will have an id on it
-		
+
 		select(doc || format('{"id": %s}', saved.id::text)::jsonb) into res;
 		execute format('update %s.%s set body=%L, updated_at = now() where id=%s',schema,collection,res,saved.id);
-		
 
 	end if;
-	res := saved.body;
+
+
 	-- do it automatically MMMMMKKK?
 	foreach search_key in array search
 	loop
