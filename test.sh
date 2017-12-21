@@ -3,7 +3,7 @@ TESTDB=doxxy
 dropdb $TESTDB
 createdb $TESTDB
 psql $TESTDB < build.sql --quiet
-echo "Testing the save functionality"
+echo "Here we go!"
 
 psql $TESTDB < tests/save.sql
 psql $TESTDB < tests/finding.sql
