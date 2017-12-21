@@ -5,19 +5,20 @@ as $$
 declare
 	column_exists int;
 begin
-		execute format('SELECT count(1) 
-										FROM information_schema.columns 
+		execute format('SELECT count(1)
+										FROM information_schema.columns
 										WHERE table_name=%L and table_schema=%L and column_name=%L',
-									collection,schema,key) into column_exists;
+									collection,schema,'lookup_' || key) into column_exists;
 
 		if column_exists < 1 then
 			-- add the column
-			execute format('alter table %s.%s add column %s text', schema, collection,key);
+			execute format('alter table %s.%s add column %s text', schema, collection, 'lookup_' || key);
+
 			-- fill it
-			execute format('update %s.%s set %s = body ->> %L', schema, collection, key, key);
+			execute format('update %s.%s set %s = body ->> %L', schema, collection, 'lookup_' || key, key);
 
 			-- index it
-			execute format('create index on %s.%s(%s)', schema,collection,key);
+			execute format('create index on %s.%s(%s)', schema, collection, 'lookup_' || key);
 		end if;
 		res := true;
 end;
