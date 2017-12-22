@@ -16,9 +16,11 @@ begin
 		json_key := split_part(lookup_key,'_',2);
 
     execute format('update %s.%s set %s = %L where id=%s',
-                    TG_TABLE_SCHEMA, TG_TABLE_NAME, lookup_key, new.body ->> json_key, new.id
+                    TG_TABLE_SCHEMA, 
+                    TG_TABLE_NAME, 
+                    lookup_key, new.body ->> json_key, 
+                    new.id
                   );
-	return new;
   end loop;
   return new;
 end;

@@ -24,10 +24,10 @@ begin
 
       -- TODO: drop a trigger on this!
       execute format('CREATE TRIGGER trigger_update_%s_%s
-      AFTER UPDATE ON %s.%s
-      FOR EACH ROW
-      WHEN (OLD.body IS DISTINCT FROM new.body) 
-      EXECUTE PROCEDURE dox.update_lookup();'
+      after update on %s.%s
+      for each row
+      when (old.body <> new.body) 
+      execute procedure dox.update_lookup();'
       ,collection, lookup_key, schema, collection);
 		end if;
 		res := true;

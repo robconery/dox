@@ -10,12 +10,13 @@ returns setof jsonb
 as $$
 declare
 	search_param text := '%' || term;
+  query_text text := format('select body from %s.%s where %s ilike %L',schema,collection,'lookup_' || key,search_param);
 begin
 
 	-- ensure we have the lookup column created if it doesn't already exist
 	perform dox.create_lookup_column(collection => collection, schema => schema, key => key);
 
 	return query
-	execute format('select body from %s.%s where %s ilike %L',schema,collection,'lookup_' || key,search_param);
+	execute query_text;
 end;
 $$ language plpgsql;
