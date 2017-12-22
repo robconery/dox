@@ -1,3 +1,4 @@
+DB=CHANGE_ME
 BUILD=${CURDIR}/build.sql
 FUNCTIONS=$(shell ls scripts/functions/*.sql)
 INIT=${CURDIR}/scripts/init.sql
@@ -7,7 +8,7 @@ TEST=${CURDIR}/test.sql
 all: init functions
 
 install: all
-	@psql dvdrental < $(BUILD) --quiet
+	@psql $(DB) < $(BUILD) --quiet
 
 init:
 	@cat $(INIT) >> $(BUILD)
