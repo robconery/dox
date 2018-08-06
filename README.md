@@ -18,7 +18,7 @@ Let's say you have a JSON document called `customer`:
 You want to save this to Postgres using document storage as you know things will change. With this API you can do that by calling a simple function:
 
 ```sql
-select * from dox.save(table => 'customers', doc => '[wad of json]');
+select * from dox.save(collection => 'customers', doc => '[wad of json]');
 ```
 
 This will do a few things:
